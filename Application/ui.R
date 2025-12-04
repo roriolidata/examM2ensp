@@ -13,20 +13,33 @@ library(dplyr)
 library(bslib)
 library(DT)
 
+thematic::thematic_shiny(font = "auto")
+
 # Define UI for application that draws a histogram
-fluidPage(
+fluidPage(theme = bs_theme(
+  version = 5,
+  bootswatch="minty"
+),
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("Exploration des Diamands"),
 
     # Sidebar with a slider input for number of bins
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+          radioButtons(
+            inputId="rose",
+            label="Cloriez les points en rose?",
+            choices=c("oui","non")
+          ),
+
+            sliderInput(inputId="prix",
+                        label="Prix maximum:",
+                        min = 0,
+                        max = 10000,
+                        value = 5000), 
+          selectInput(inputId="couleur",
+                      label="Choisir une couleur à filtrer",c("D", "E","F","G","H","I","I"),selected = NULL, multiple = FALSE, selectize = TRUE)
         ),
 
         # Show a plot of the generated distribution
