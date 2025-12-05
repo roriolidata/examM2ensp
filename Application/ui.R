@@ -36,7 +36,7 @@ ui<-fluidPage(theme = bs_theme(
           
           selectInput(inputId="couleur",
                       label="Choisir une couleur à filtrer",
-                      c("D", "E","F","G","H","I","J"), #on aurait pu utiliser levels(dimaonds$color) mais l'ordre n'aurait peut-être pas été le même que sur l'appli
+                      choices = sort(unique(diamonds$color)), 
                       selected = "D"),
           
             sliderInput(inputId="prix",
@@ -51,7 +51,7 @@ ui<-fluidPage(theme = bs_theme(
 
         # Main
         mainPanel(
-          plotOutput(outputId="diamondPlot"),
+          plotlyOutput(outputId="diamondPlot"),
           DTOutput(outputId="diamondDT")
         )
     )
@@ -69,26 +69,19 @@ server <- function(input, output) {
       filter(color==input$couleur)|>  #couleur choisie par l'utilisateur
       filter(price<=input$prix) #prix max choisi par l'utilisateur
     
-    rv$Plot<-rv$df |> 
+    graph<-rv$df |> 
       ggplot(aes(x=carat,y=price))+
       geom_point(color=ifelse(input$rose=="Oui", "pink","black"))+
-      theme_grey(base_size=12)+
-      theme(
-        panel.background = element_rect(fill = "#EBEBEB", color = NA),
-        plot.background  = element_rect(fill = "white",   color = NA),
-        panel.grid.major = element_line(color = "white", size = 0.5),
-        axis.title = element_text(size = 16),
-        axis.text  = element_text(size = 12),
-        plot.title = element_text(size = 18)
-      ) +
-      labs(title=paste0("prix: ",input$prix," & color: ",input$couleur,"\n"))
+      labs(title=paste0("prix: ",input$prix," & color: ",input$couleur,"\n")) 
       
+    rv$Plot<-ggplotly(graph)
+    
     rv$DT<-rv$df[,1:7]
     
     
     })
 
-  output$diamondPlot<-renderPlot({rv$Plot
+  output$diamondPlot<-renderPlotly({rv$Plot
        })
   
   output$diamondDT<-renderDT({rv$DT})
