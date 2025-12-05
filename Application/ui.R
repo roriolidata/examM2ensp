@@ -21,12 +21,12 @@ ui<-fluidPage(theme = bs_theme(
         sidebarPanel(
           radioButtons(
             inputId="rose",
-            label="Coloriez les points en rose?",
+            label="Colorier les points en rose?",
             choices=c("Oui","Non")
           ),
           
           selectInput(inputId="couleur",
-                      label="Choisir une couleur à filtrer:",
+                      label="Choisir une couleur à filtrer :",
                       choices = sort(unique(diamonds$color)), 
                       selected = "D"),
           
@@ -64,9 +64,10 @@ server <- function(input, output) {
       ggplot(aes(x=carat,y=price))+
       geom_point(color=ifelse(input$rose=="Oui", "pink","black"))+
       theme(
-        axis.title = element_text(size = 16),
+        text       = element_text(family = "Arial"),
+        axis.title = element_text(size = 12),
         axis.text  = element_text(size = 10),
-        plot.title = element_text(size = 18)
+        plot.title = element_text(size = 14)
       ) +
       labs(title=paste0("prix: ",input$prix," & color: ",input$couleur,"\n")) 
       
