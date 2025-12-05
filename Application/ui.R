@@ -12,6 +12,7 @@ library(ggplot2)
 library(dplyr)
 library(bslib)
 library(DT)
+library(plotly)
 
 thematic::thematic_shiny(font = "auto")
 
@@ -62,7 +63,21 @@ server <- function(input, output) {
   rv <- reactiveValues(df = NULL)
   
   observeEvent(input$bouton, {
-    )
-  })
+    rv$df<-diamonds |>
+      filter(color==input$couleur & prix==input$prix)
+    colorisation<-ifelse(input$rose=="Oui", "pink","black")
+    rv$Dplot<-ggplot(rv$df,
+                     aes(x=carat,y=price))+
+              geom_point(couleur=colorisation)+
+              theme_minimal()+
+              labs(titre=paste0("prix: ",{input$prix}," & color: ",{input$couleur}))+
+              plotl
+    rv$DDT<-  
+      })
+
+  output$plot<-renderPlot({rv$Dplot})
+  output$DT<-renderDT({rv$DDT})
+  
 }
   
+
