@@ -1,12 +1,3 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    https://shiny.posit.co/
-#
-
 library(shiny)
 library(ggplot2)
 library(dplyr)
@@ -35,14 +26,14 @@ ui<-fluidPage(theme = bs_theme(
           ),
           
           selectInput(inputId="couleur",
-                      label="Choisir une couleur à filtrer",
+                      label="Choisir une couleur à filtrer:",
                       choices = sort(unique(diamonds$color)), 
                       selected = "D"),
           
             sliderInput(inputId="prix",
                         label="Prix maximum:",
-                        min = 0,
-                        max = 10000,
+                        min = 300,
+                        max = 20000,
                         value = 5000), 
           actionButton(inputId = "bouton", 
                        label = "Visualiser le graph")
@@ -72,6 +63,11 @@ server <- function(input, output) {
     graph<-rv$df |> 
       ggplot(aes(x=carat,y=price))+
       geom_point(color=ifelse(input$rose=="Oui", "pink","black"))+
+      theme(
+        axis.title = element_text(size = 16),
+        axis.text  = element_text(size = 10),
+        plot.title = element_text(size = 18)
+      ) +
       labs(title=paste0("prix: ",input$prix," & color: ",input$couleur,"\n")) 
       
     rv$Plot<-ggplotly(graph)
