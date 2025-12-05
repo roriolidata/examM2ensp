@@ -25,7 +25,7 @@ fluidPage(theme = bs_theme(
     # Application title
     titlePanel("Exploration des Diamands"),
 
-    # Sidebar with a slider input for number of bins
+    # Sidebar 
     sidebarLayout(
         sidebarPanel(
           radioButtons(
@@ -33,6 +33,8 @@ fluidPage(theme = bs_theme(
             label="Cloriez les points en rose?",
             choices=c("oui","non")
           ),
+          actionButton(inputId = "bouton", 
+                       label = "Visualiser le graph"),
 
             sliderInput(inputId="prix",
                         label="Prix maximum:",
@@ -42,8 +44,9 @@ fluidPage(theme = bs_theme(
           selectInput(inputId="couleur",
                       label="Choisir une couleur à filtrer",c("D", "E","F","G","H","I","J"), #on aurait pu utiliser levels(dimaonds$color) mais l'ordre n'aurait peut-être pas été le même que sur l'appli
                       selected = "D", multiple = FALSE, selectize = TRUE)),
+        
 
-        # Show a plot of the generated distribution
+        # Main
         mainPanel(
           textOutput(outputId = "nbtext"),
           plotOutput(outputId="diamondPlot"),
@@ -55,4 +58,11 @@ fluidPage(theme = bs_theme(
 # Serveur
 
 server <- function(input, output) {
+  
+  rv <- reactiveValues(df = NULL)
+  
+  observeEvent(input$bouton, {
+    )
+  })
+}
   
