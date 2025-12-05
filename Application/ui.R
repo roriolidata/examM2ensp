@@ -15,7 +15,8 @@ library(DT)
 
 thematic::thematic_shiny(font = "auto")
 
-# Define UI for application that draws a histogram
+# UI
+
 fluidPage(theme = bs_theme(
   version = 5,
   bootswatch="minty"
@@ -39,12 +40,19 @@ fluidPage(theme = bs_theme(
                         max = 10000,
                         value = 5000), 
           selectInput(inputId="couleur",
-                      label="Choisir une couleur à filtrer",c("D", "E","F","G","H","I","I"),selected = NULL, multiple = FALSE, selectize = TRUE)
-        ),
+                      label="Choisir une couleur à filtrer",c("D", "E","F","G","H","I","J"), #on aurait pu utiliser levels(dimaonds$color) mais l'ordre n'aurait peut-être pas été le même que sur l'appli
+                      selected = "D", multiple = FALSE, selectize = TRUE)),
 
         # Show a plot of the generated distribution
         mainPanel(
-            plotOutput("distPlot")
+          textOutput(outputId = "nbtext"),
+          plotOutput(outputId="diamondPlot"),
+          DTOutput(outputId="diamondDT")
         )
     )
 )
+
+# Serveur
+
+server <- function(input, output) {
+  
