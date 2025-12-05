@@ -19,37 +19,38 @@ thematic::thematic_shiny(font = "auto")
 # UI
 
 ui<-fluidPage(theme = bs_theme(
-  version = 5,
-  bootswatch="minty"
-),
-
-    # Application title
-    titlePanel("Exploration des Diamands"),
+              version = 5,
+              bootswatch="minty"),
+              
+    
+    titlePanel("Exploration des Diamants"), # Titre de mon application
 
     # Sidebar 
     sidebarLayout(
         sidebarPanel(
           radioButtons(
             inputId="rose",
-            label="Cloriez les points en rose?",
-            choices=c("oui","non")
+            label="Coloriez les points en rose?",
+            choices=c("Oui","Non")
           ),
-          actionButton(inputId = "bouton", 
-                       label = "Visualiser le graph"),
-
+          
+          selectInput(inputId="couleur",
+                      label="Choisir une couleur à filtrer",
+                      c("D", "E","F","G","H","I","J"), #on aurait pu utiliser levels(dimaonds$color) mais l'ordre n'aurait peut-être pas été le même que sur l'appli
+                      selected = "D"),
+          
             sliderInput(inputId="prix",
                         label="Prix maximum:",
                         min = 0,
                         max = 10000,
                         value = 5000), 
-          selectInput(inputId="couleur",
-                      label="Choisir une couleur à filtrer",c("D", "E","F","G","H","I","J"), #on aurait pu utiliser levels(dimaonds$color) mais l'ordre n'aurait peut-être pas été le même que sur l'appli
-                      selected = "D", multiple = FALSE, selectize = TRUE)),
+          actionButton(inputId = "bouton", 
+                       label = "Visualiser le graph")
+          ),
         
 
         # Main
         mainPanel(
-          textOutput(outputId = "nbtext"),
           plotOutput(outputId="diamondPlot"),
           DTOutput(outputId="diamondDT")
         )
@@ -60,22 +61,29 @@ ui<-fluidPage(theme = bs_theme(
 
 server <- function(input, output) {
   
-  rv <- reactiveValues(df = NULL)
+  rv <- reactiveValues()
   
   observeEvent(input$bouton, {
+    
     rv$df<-diamonds |>
-      filter(color==input$couleur & prix==input$prix)
-    colorisation<-ifelse(input$rose=="Oui", "pink","black")
-      })
-
-  output$diamondPlot<-renderPlot({rv$df |> 
+      filter(color==input$couleur)|>  #couleur choisie par l'utilisateur
+      filter(price<=input$prix) #prix max choisi par l'utilisateur
+    
+    rv$Plot<-rv$df |> 
       ggplot(aes(x=carat,y=price))+
-      geom_point(couleur=colorisation)+
+      geom_point(color=ifelse(input$rose=="Oui", "pink","black"))+
       theme_minimal()+
-      labs(titre=paste0("prix: ",{input$prix}," & color: ",{input$couleur})) |>
-      ggplotly() })
+      labs(title=paste0("prix: ",input$prix," & color: ",input$couleur))
+      
+    rv$DT<-rv$df[,1:7]
+    
+    
+    })
+
+  output$diamondPlot<-renderPlot({rv$Plot
+       })
   
-  output$diamondDT<-renderDT({rv$df[,1:7]})
+  output$diamondDT<-renderDT({rv$DT})
   
 }
   
