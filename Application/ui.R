@@ -18,7 +18,7 @@ thematic::thematic_shiny(font = "auto")
 
 # UI
 
-fluidPage(theme = bs_theme(
+ui<-fluidPage(theme = bs_theme(
   version = 5,
   bootswatch="minty"
 ),
@@ -66,18 +66,18 @@ server <- function(input, output) {
     rv$df<-diamonds |>
       filter(color==input$couleur & prix==input$prix)
     colorisation<-ifelse(input$rose=="Oui", "pink","black")
-    rv$Dplot<-ggplot(rv$df,
-                     aes(x=carat,y=price))+
-              geom_point(couleur=colorisation)+
-              theme_minimal()+
-              labs(titre=paste0("prix: ",{input$prix}," & color: ",{input$couleur}))+
-              plotl
-    rv$DDT<-  
       })
 
-  output$plot<-renderPlot({rv$Dplot})
-  output$DT<-renderDT({rv$DDT})
+  output$diamondPlot<-renderPlot({rv$df |> 
+      ggplot(aes(x=carat,y=price))+
+      geom_point(couleur=colorisation)+
+      theme_minimal()+
+      labs(titre=paste0("prix: ",{input$prix}," & color: ",{input$couleur})) |>
+      ggplotly() })
+  
+  output$diamondDT<-renderDT({rv$df[,1:7]})
   
 }
   
-
+# Run the application 
+shinyApp(ui = ui, server = server)
