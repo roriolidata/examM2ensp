@@ -72,8 +72,16 @@ server <- function(input, output) {
     rv$Plot<-rv$df |> 
       ggplot(aes(x=carat,y=price))+
       geom_point(color=ifelse(input$rose=="Oui", "pink","black"))+
-      theme_minimal()+
-      labs(title=paste0("prix: ",input$prix," & color: ",input$couleur))
+      theme_grey(base_size=12)+
+      theme(
+        panel.background = element_rect(fill = "#EBEBEB", color = NA),
+        plot.background  = element_rect(fill = "white",   color = NA),
+        panel.grid.major = element_line(color = "white", size = 0.5),
+        axis.title = element_text(size = 16),
+        axis.text  = element_text(size = 12),
+        plot.title = element_text(size = 18)
+      ) +
+      labs(title=paste0("prix: ",input$prix," & color: ",input$couleur,"\n"))
       
     rv$DT<-rv$df[,1:7]
     
